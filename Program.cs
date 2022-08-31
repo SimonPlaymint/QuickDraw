@@ -4,8 +4,6 @@ using System;
 using System.Diagnostics;
 using System.Threading;
 
-
-
 namespace QuickDraw
 {
 
@@ -18,9 +16,12 @@ namespace QuickDraw
         {
 
             //TODO: best reaction times. formatting improvements
+            
+            Console.SetWindowSize(81, 24);
+            Console.SetBufferSize(81, 24);
+            Console.SetWindowPosition(0, 0);
 
-            // Define the frequencies of notes in an octave, as well as
-            // silence (rest).
+            // Define the frequencies of notes in an octave
 
             const int A = 220;
             const int G = 392;
@@ -34,109 +35,106 @@ namespace QuickDraw
             Random rnd = new();
 
             const string menu = @"
-            
-                Quick Draw
-                -----------------------|------------------------                    
-                    Wait for the signal and press [spacebar] to 
+
+                -----------------------|------------------------
+                   Wait for the signal and press [spacebar] to
                     shoot your opponent before they shoot you. 
                                     .........
-                           [ press [space] to start ]                                                            
-                                   
-                                                                        
+                           [ press [space] to start ]
+
+
                           _0                       O_ 
                          |/                         \|
                          /\                         /\
                         /  |                       |  \      
                 -----------------------|------------------------
-                ------------------------------------------------";
+                ------------------------------------------------
+                                                                ";
 
             const string getReady = @"
 
-                Quick Draw
                 -----------------------|------------------------
-                     
-                                    GET READY
-                                    .........
-                 
 
-                                                                        
+                                   GET READY
+                                   .........
+
+
+
                           _0                       O_ 
                          |/                         \|
                          /\                         /\
                         /  |                       |  \      
                 -----------------------|------------------------
-                ------------------------------------------------";
+                ------------------------------------------------
+                                                                ";
 
             const string fire = @"
 
-                Quick Draw
                 -----------------------|------------------------
-                     
+
                                      FIRE!
                                    .........
-                                   [ space ]                                                            
+                                   [ space ]
 
-                                                                        
+
                           _0                       O_ 
                          |/                         \|
                          /\                         /\
                         /  |                       |  \      
                 -----------------------|------------------------
-                ------------------------------------------------";
+                ------------------------------------------------
+                                                                ";
 
             const string loseTooSlow = @"
-
-                Quick Draw
+                
                 -----------------------|------------------------
-                     
+
                                    TOO SLOW!
                                    .........
-                                [ you're dead ]                                                            
+                                [ you're dead ]
 
-                                                                        
+
                                                >  ¬__ O 
                          //                           / \
                         0/__/\                       /\
                             \                       |  \      
                 -----------------------|------------------------
                 ------------------------------------------------
-                      *** Press [space] to try again ***";
+                      *** Press [space] to try again ***        ";
 
             const string loseTooFast = @"
-
-                Quick Draw
+                
                 -----------------------|------------------------
-                     
+
                               TOO FAST, YOU MISSED!
                                    .........
-                                [ you're dead ]                                                            
+                                [ you're dead ]
 
-                                                                        
+
                                                >  ¬__ O 
                          //                           / \
                         0/__/\                       /\
                             \                       |  \      
                 -----------------------|------------------------
                 ------------------------------------------------
-                      *** Press [space] to try again ***";
+                      *** Press [space] to try again ***        ";
 
             const string win = @"
 
-                Quick Draw
                 -----------------------|------------------------
-                     
+
                                 *** YOU WIN ***
                                    .........
 
 
-                                                                        
+
                          0 __⌐  <                         
                        / \                           \\
                          /\                       /\__/O
                         /  |                       /      
                 -----------------------|------------------------
                 ------------------------------------------------
-                       *** Press [space] to continue ***";
+                       *** Press [space] to continue ***        ";
                         
             while (true)
             {
@@ -144,7 +142,17 @@ namespace QuickDraw
                 bool pAlive = false;
                 int currentRound = 1;
 
+                static void SetHeader(int _currentRound)
+                    {
+                    string header = "QUICKDRAW | ROUND " + _currentRound;
+                    Console.SetCursorPosition(29, 2);
+                    Console.WriteLine(header);
+                    }
+
                 Console.Clear();
+                Console.CursorVisible = false;
+                Console.ForegroundColor = ConsoleColor.Gray;
+                SetHeader(currentRound);                
                 Console.WriteLine(menu);
                 Console.Beep(G, QUARTER);
                 TimeSpan? cpuReactionTime;
@@ -163,11 +171,13 @@ namespace QuickDraw
                 while (pAlive == true)
                 {
                     Console.Clear();
+                    Console.CursorVisible = false;
+                    Console.ForegroundColor = ConsoleColor.Gray;
+                    SetHeader(currentRound);
+                    Console.WriteLine(getReady);
+                    Console.Beep(G, QUARTER);
                     cpuReactionTime = TimeSpan.FromMilliseconds(2000 / currentRound);
                     readyDur = TimeSpan.FromMilliseconds(rnd.Next(1000, 5000));
-                    Console.WriteLine(getReady);
-                    Console.WriteLine("ROUND " + currentRound);
-                    Console.Beep(G, QUARTER);
                     Stopwatch stopwatch = new();
                     stopwatch.Restart();
                     bool tooFast = false;
@@ -182,6 +192,8 @@ namespace QuickDraw
 
                     Console.Clear();
                     Console.CursorVisible = false;
+                    Console.ForegroundColor = ConsoleColor.Gray;
+                    SetHeader(currentRound);
                     Console.WriteLine(fire);
                     Console.Beep(A, QUARTER);
                     stopwatch.Restart();
@@ -197,6 +209,9 @@ namespace QuickDraw
                     if (tooFast == true)
                     {
                         Console.Clear();
+                        Console.CursorVisible = false;
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        SetHeader(currentRound);
                         Console.WriteLine(loseTooFast);
                         Console.Beep(A, WHOLE);
                         if (Console.ReadKey(true).Key is ConsoleKey.Spacebar)
@@ -207,6 +222,9 @@ namespace QuickDraw
                     else if (tooSlow == true)
                     {
                         Console.Clear();
+                        Console.CursorVisible = false;
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        SetHeader(currentRound);
                         Console.WriteLine(loseTooSlow);
                         Console.Beep(A, WHOLE);
                         if (Console.ReadKey(true).Key is ConsoleKey.Spacebar)
@@ -217,6 +235,9 @@ namespace QuickDraw
                     else
                     {
                         Console.Clear();
+                        Console.CursorVisible = false;
+                        Console.ForegroundColor = ConsoleColor.Green;
+                        SetHeader(currentRound);
                         Console.WriteLine(win);
                         Console.Beep(G, HALF);
                         if (Console.ReadKey(true).Key is ConsoleKey.Spacebar)
