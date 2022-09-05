@@ -149,6 +149,13 @@ namespace QuickDraw
                     Console.WriteLine(header);
                     }
 
+                static void SetReactionTime(double elapsedTime)
+                {
+                    string reactionTime = "REACTION TIME " + elapsedTime + "ms";
+                    Console.SetCursorPosition(29, 2);
+                    Console.WriteLine(reactionTime);
+                }
+
                 Console.Clear();
                 Console.CursorVisible = false;
                 Console.ForegroundColor = ConsoleColor.Gray;
@@ -176,9 +183,11 @@ namespace QuickDraw
                     SetHeader(currentRound);
                     Console.WriteLine(getReady);
                     Console.Beep(G, QUARTER);
-                    cpuReactionTime = TimeSpan.FromMilliseconds(2000 / currentRound);
+                    cpuReactionTime = TimeSpan.FromMilliseconds(500 / currentRound);
                     readyDur = TimeSpan.FromMilliseconds(rnd.Next(1000, 5000));
+                    double reactionTime;
                     Stopwatch stopwatch = new();
+                    stopwatch.Reset();
                     stopwatch.Restart();
                     bool tooFast = false;
 
@@ -239,6 +248,8 @@ namespace QuickDraw
                         Console.ForegroundColor = ConsoleColor.Green;
                         SetHeader(currentRound);
                         Console.WriteLine(win);
+                        reactionTime = stopwatch.Elapsed.TotalMilliseconds;
+                        SetReactionTime(reactionTime);
                         Console.Beep(G, HALF);
                         if (Console.ReadKey(true).Key is ConsoleKey.Spacebar)
                         {
